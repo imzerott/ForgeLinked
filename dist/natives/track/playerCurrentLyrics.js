@@ -47,9 +47,16 @@ exports.default = new forgescript_1.NativeFunction({
             required: false,
             rest: false,
         },
+        {
+            name: 'lang',
+            description: 'Get the translated lyrics directly from the NodeLink lyrics source. (probably not included in LavaLink or similar)',
+            type: forgescript_1.ArgType.String,
+            required: false,
+            rest: false,
+        },
     ],
     output: forgescript_1.ArgType.String,
-    async execute(ctx, [guildId, type]) {
+    async execute(ctx, [guildId, type, lang]) {
         const linked = ctx.client.getExtension(index_js_1.ForgeLinked, true).lavalink;
         if (!linked) return this.customError('ForgeLinked is not initialized');
         if (!guildId) guildId = ctx.guild;
@@ -72,8 +79,8 @@ exports.default = new forgescript_1.NativeFunction({
                 const auth = nodeOptions.authorization ?? nodeOptions.password;
                 const secure = nodeOptions.secure ?? false;
                 const protocol = secure ? 'https' : 'http';
-                const url = `${protocol}://${host}:${port}/v4/loadlyrics?encodedTrack=${encodeURIComponent(encodedTrack)}`;
-
+                const langTo = lang ? `&lang=${lang}` : '';
+                const url = `${protocol}://${host}:${port}/v4/loadlyrics?encodedTrack=${encodeURIComponent(encodedTrack)}${langTo}`;
                 const res = await fetch(url, { headers: { Authorization: auth } });
                 if (!res.ok) return this.customError(`Nodelink lyrics request failed: ${res.status}`);
 
